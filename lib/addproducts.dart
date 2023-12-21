@@ -301,122 +301,8 @@ class _AddproductsState extends State<Addproducts> {
                         ),
                         SizedBox(height: 20,),
 
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Text(
-                            "Discount on",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 1,
-                        ),
-                        TextField(
-                          style: TextStyle(color: Colors.orange),
-                          controller: discount_on,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-
-                          ),
-                        ),
-                        Center(
-                          child: DropdownButton<String>(
-                            value: dropdownValue_name2,
-                            icon: const Icon(
-                                Icons.arrow_drop_down_outlined),
-                            elevation: 16,
-                            style: const TextStyle(color: Colors.orange),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.orange,
-                            ),
-                            onChanged: (String? value) {
-                              // This is called when the user selects an item.
-                              setState(() {
-                                dropdownValue_name2 = value!;
-                                discount_on.text = dropdownValue_name2;
-                              });
-                            },
-                            items: list_name.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                          ),
-                        ),
 
 
-
-
-
-                        SizedBox(height: 10,),
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Text(
-                            "Type",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 1,
-                        ),
-                        TextField(
-                          style: TextStyle(color: Colors.orange),
-                          controller: type,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-
-                          ),
-                        ),
-                        Center(
-                          child: DropdownButton<String>(
-                            value: dropdownValue_type2,
-                            icon: const Icon(
-                                Icons.arrow_drop_down_outlined),
-                            elevation: 16,
-                            style: const TextStyle(color: Colors.orange),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.orange,
-                            ),
-                            onChanged: (String? value) {
-                              // This is called when the user selects an item.
-                              setState(() {
-                                dropdownValue_type2 = value!;
-                                type.text = dropdownValue_type2;
-                              });
-                            },
-                            items: list_type2.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                          ),
-                        ),
-
-                        SizedBox(height: 10,),
 
                         Container(
                           width: screenWidth * 0.8 > 400 ? 400 : screenWidth * 0.8,
@@ -429,12 +315,7 @@ class _AddproductsState extends State<Addproducts> {
                                _showErrorSnackbar("Select Product Type");
                              }
 
-                             else if (discount_on.text.isEmpty || discount_on.text=="Select Name"){
-                               _showErrorSnackbar("Select Discounted Product");
-                             }
-                             else if (type.text.isEmpty || type.text=="Select Type"){
-                               _showErrorSnackbar("Select Discount Type");
-                             }
+
                              else if (price.text.isEmpty ){
                                _showErrorSnackbar("Enter Price");
                              } else {
@@ -449,8 +330,7 @@ class _AddproductsState extends State<Addproducts> {
                                  await FirebaseFirestore.instance.collection('Products').add({
                                    'ProductName': productname.text,
                                    'ProductType': producttype.text,
-                                   'Discounted_on_Product': discount_on.text,
-                                   'Discount_Type': type.text,
+
                                    'Price': price.text,
                                    'Discount': discount.text,
                                    'UserId': userId,

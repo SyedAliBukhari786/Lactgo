@@ -2,6 +2,8 @@
 
 
 
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,7 +45,34 @@ class _RegisrationState extends State<Regisration> {
   final TextEditingController _farmname = TextEditingController();
 
   final TextEditingController _city = TextEditingController();
+  String selectedImagePath="";
 
+  String selectedImagePath2="";
+
+  void selectImage() async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        selectedImagePath = pickedImage.path;
+      });
+    } else {
+     _showErrorSnackbar("Profile Image not selected");
+    }
+  }
+  void selectImage2() async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        selectedImagePath2 = pickedImage.path;
+      });
+    } else {
+      _showErrorSnackbar("Certificate Image not selected");
+    }
+  }
   String _selectedCity = "Select City";
 
   bool _loading = false;
@@ -488,7 +517,7 @@ class _RegisrationState extends State<Regisration> {
                                 ),
                               ),
                               GestureDetector(
-                               // onTap: ,
+                                onTap: selectImage,
                                 child: Container(
                                   width: screenWidth * 0.8 > 400
                                       ? 400
@@ -505,12 +534,12 @@ class _RegisrationState extends State<Regisration> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
-                                      child: Icon(
+                                      child:( selectedImagePath=="")? Icon(
                                         Icons.upload,
                                         size: 48,
                                         // Adjust the size of the icon as needed
                                         color: Colors.white,
-                                      ),
+                                      ):Image.asset("assets/done.png"),
                                     ),
                                   ),
                                 ),
@@ -527,7 +556,7 @@ class _RegisrationState extends State<Regisration> {
                                 ),
                               ),
                             GestureDetector(
-                             // onTap: ,
+                              onTap: selectImage2,
                                 child: Container(
                                   width: screenWidth * 0.8 > 400
                                       ? 400
@@ -544,12 +573,12 @@ class _RegisrationState extends State<Regisration> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
-                                      child: Icon(
+                                      child:( selectedImagePath2=="")? Icon(
                                         Icons.upload,
                                         size: 48,
                                         // Adjust the size of the icon as needed
                                         color: Colors.white,
-                                      ),
+                                      ):Image.asset("assets/done.png"),
                                     ),
                                   ),
                                 ),
@@ -668,14 +697,40 @@ name=_name.text.trim();
     }
     else if (city==("Select City")) {
       _showErrorSnackbar("Select city");
-    } else {
+    }
+    else if (selectedImagePath==("")) {
+      _showErrorSnackbar("Select Profile Picture ");
+    }
+    else if (selectedImagePath2==("")) {
+      _showErrorSnackbar("Select Certificate Picture");
+    }else {
       try{
+
+
+
+
+
+
+
         UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: eamil,
           password: password,
         );
 
         String uid = userCredential.user!.uid;
+
+        final Reference storageReference =
+        FirebaseStorage.instance.ref().child('profile_images/$uid.jpg');
+        await storageReference.putFile(File(selectedImagePath!));
+
+        final Reference storageReference2 =
+        FirebaseStorage.instance.ref().child('certificate_images/$uid.jpg');
+        await storageReference2.putFile(File(selectedImagePath2!));
+        final String imageURL = await storageReference.getDownloadURL();
+        final String imageURL2= await storageReference2.getDownloadURL();
+
+
+
         await FirebaseFirestore.instance.collection("Seller").doc(uid).set({
           'Email': eamil,
           'Name': name,
@@ -683,8 +738,8 @@ name=_name.text.trim();
           'Cnic': cnic,
           'Farm': farm,
           'City': city,
-          'ProfileUrl': "",
-          'CertificateUrl': "",
+          'ProfileUrl': imageURL,
+          'CertificateUrl': imageURL2,
 
 
 

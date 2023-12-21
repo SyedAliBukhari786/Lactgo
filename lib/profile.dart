@@ -5,7 +5,7 @@ import 'package:lactgo/discounts.dart';
 import 'package:lactgo/edit_farm.dart';
 import 'package:lactgo/editprofle.dart';
 import 'package:lactgo/login.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -16,8 +16,53 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
+
+  String userName = ''; // to store the user name
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData(); // fetch data when the widget is initialized
+  }
+
+
+  Future<void> fetchData() async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user = auth.currentUser;
+      // Replace 'yourCollection' with the actual collection name
+      // Replace 'yourUserId' with the actual user ID
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await FirebaseFirestore.instance.collection('Seller').doc(user?.uid).get();
+
+      // Check if the document exists
+      if (documentSnapshot.exists) {
+        // Replace 'name' with the actual field name you want to retrieve
+        String name = documentSnapshot.data()?['Name'] ?? '';
+
+        setState(() {
+          userName = name;
+        });
+      } else {
+        print('Document does not exist');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
+
+
+
+
+
+
+
+
+
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
     return SafeArea(
@@ -67,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(
                         height: 5,
                       ),
-                      Text("User Name",  style: TextStyle(
+                      Text("$userName",  style: TextStyle(
                         color: Colors.white,
                         fontSize:screenWidth * 0.04 > 400 ? 30 : screenWidth *0.08,
                         fontWeight: FontWeight.bold,
