@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lactgo/bottombar.dart';
+import 'package:lactgo/cnictextcontroller.dart';
 import 'package:lactgo/login.dart';
 import 'package:lactgo/splashscreen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -294,6 +295,8 @@ class _RegisrationState extends State<Regisration> {
                               TextField(
                                 style: TextStyle(color: Colors.orange),
                                 controller: _cnic,
+                                inputFormatters: [CNICFormatter()],
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(color: Colors.white),
